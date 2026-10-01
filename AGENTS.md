@@ -6,8 +6,8 @@ a tarefa. Ela reúne as convenções; este arquivo registra apenas o contexto lo
 
 - Package raiz: `com.kotlin.template`; entrada: `TemplateApplication.kt`.
 - Usar `./gradlew`. O build exige toolchain Java 25; o Java do terminal pode ser outro.
-- HTTP usa WebFlux e persistência usa JPA bloqueante. Ao conectá-los, tratar a
-  fronteira de execução e transação explicitamente.
+- HTTP usa Spring MVC e persistência usa JPA bloqueante. Manter a fronteira
+  transacional nos casos de uso e Open Session in View desabilitado.
 - `compose.yaml` contém PostgreSQL e Redis. Kafka está na configuração de
   Testcontainers; sua dependência no build não configura o broker de desenvolvimento.
 - Para validar mudanças, selecionar testes relevantes com `./gradlew test --tests '<classe>'`;

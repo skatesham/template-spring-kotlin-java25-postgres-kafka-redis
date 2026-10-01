@@ -4,7 +4,7 @@ services:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD:?Defina DATABASE_PASSWORD}'
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432'
