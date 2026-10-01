@@ -22,6 +22,14 @@ Usar esta skill tanto em implementação quanto em revisão, no escopo solicitad
 4. Escolher a validação proporcional à mudança e ao pedido. Ao concluir, informar
    o comportamento alterado, as verificações realizadas e limitações concretas.
 
+## Organização e contratos
+
+Neste template, usar `application/usecase/<intenção>/`, persistência em
+`entity/`, `repository/` e `adapter/`, e REST em `request/` e `response/`,
+sem package `dto`. Cada tipo principal público tem arquivo homônimo.
+Ao criar ou alterar endpoints, manter o OpenAPI autoexplicativo e coerente
+com o contrato real. Os detalhes estão nas referências de arquitetura e REST.
+
 ## Referências por tarefa
 
 | Quando ler                                                               | Referência                                                |

@@ -1,6 +1,10 @@
 # Application Layer
 
-A camada `application` contém os casos de uso.
+A camada `application` contém os casos de uso em `usecase/<intenção>/`,
+as dependências em `port/`, contratos de integração em `contract/`,
+resultados compartilhados em `result/` e exceções em `exception/`.
+Commands, queries e resultados exclusivos ficam em arquivos próprios junto
+ao caso de uso. Ver [Empacotamento](packaging.md).
 
 Exemplos:
 

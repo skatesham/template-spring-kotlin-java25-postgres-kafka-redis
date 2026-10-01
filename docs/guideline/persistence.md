@@ -62,3 +62,6 @@ documento
 Use um identificador técnico separado.
 
 Dados pessoais devem ser tratados como atributos protegidos, e não como identidade estrutural da aplicação.
+
+A localização detalhada de arquivos e a documentação dos contratos seguem
+[Empacotamento e localização](../architecture-ddd/references/packaging.md).

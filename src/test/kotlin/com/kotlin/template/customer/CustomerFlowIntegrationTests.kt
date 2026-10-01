@@ -1,17 +1,27 @@
 package com.kotlin.template.customer
 
 import com.kotlin.template.audit.application.port.CustomerAudit
-import com.kotlin.template.audit.application.record.RecordCustomerAudit
-import com.kotlin.template.audit.infrastructure.persistence.JdbcCustomerAudit
+import com.kotlin.template.audit.application.usecase.record.RecordCustomerAudit
+import com.kotlin.template.audit.application.usecase.retention.PurgeCustomerAudit
+import com.kotlin.template.audit.infrastructure.persistence.adapter.JdbcCustomerAudit
 import com.kotlin.template.customer.application.contract.CustomerChange
-import com.kotlin.template.customer.application.create.CreateCustomer
-import com.kotlin.template.customer.application.create.CreateCustomerCommand
-import com.kotlin.template.customer.application.delete.DeleteExpiredCustomers
-import com.kotlin.template.customer.application.publish.PublishCustomerOutbox
-import com.kotlin.template.customer.application.update.UpdateCustomer
-import com.kotlin.template.customer.application.update.UpdateCustomerCommand
-import com.kotlin.template.notification.application.record.NotifyCustomerChange
+import com.kotlin.template.customer.application.usecase.create.CreateCustomer
+import com.kotlin.template.customer.application.usecase.create.CreateCustomerCommand
+import com.kotlin.template.customer.application.usecase.delivery.PublishCustomerOutbox
+import com.kotlin.template.customer.application.usecase.retention.DeleteExpiredCustomers
+import com.kotlin.template.customer.application.usecase.update.UpdateCustomer
+import com.kotlin.template.customer.application.usecase.update.UpdateCustomerCommand
+import com.kotlin.template.notification.application.usecase.record.NotifyCustomerChange
+import com.kotlin.template.notification.application.usecase.retention.PurgeCustomerNotifications
 import io.micrometer.core.instrument.MeterRegistry
+import java.time.Duration
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.test.*
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -46,14 +56,6 @@ import org.testcontainers.kafka.KafkaContainer
 import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 import tools.jackson.databind.ObjectMapper
-import java.time.Duration
-import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.test.*
 
 @Testcontainers
 @ExtendWith(OutputCaptureExtension::class)
@@ -92,6 +94,10 @@ class CustomerFlowIntegrationTests {
     lateinit var audit: RecordCustomerAudit
     @Autowired
     lateinit var notifications: NotifyCustomerChange
+    @Autowired
+    lateinit var purgeAudit: PurgeCustomerAudit
+    @Autowired
+    lateinit var purgeNotifications: PurgeCustomerNotifications
     @Autowired
     lateinit var failingAudit: FailingAudit
     @Autowired
@@ -438,7 +444,7 @@ class CustomerFlowIntegrationTests {
                 id
             )
         }
-        audit.purge(); notifications.purge()
+        purgeAudit.execute(); purgeNotifications.execute()
         assertEquals(0, count("customer_audit", id)); assertEquals(0, count("customer_notifications", id))
         assertEquals(1, count("customer_audit_cursor", id)); assertEquals(1, count("customer_notifications_cursor", id))
         audit.execute(first); notifications.execute(first)
@@ -450,7 +456,7 @@ class CustomerFlowIntegrationTests {
         for (table in listOf("customer_audit_cursor", "customer_notifications_cursor")) {
             jdbc.update("UPDATE $table SET deleted_at=CURRENT_TIMESTAMP-INTERVAL '32 days' WHERE customer_id=?", id)
         }
-        audit.purge(); notifications.purge()
+        purgeAudit.execute(); purgeNotifications.execute()
         assertEquals(0, count("customer_audit_cursor", id)); assertEquals(0, count("customer_notifications_cursor", id))
         assertFailsWith<IllegalArgumentException> {
             audit.execute(

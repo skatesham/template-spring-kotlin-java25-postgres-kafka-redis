@@ -1,20 +1,25 @@
 package com.kotlin.template.customer
 
 import com.fasterxml.uuid.Generators
-import com.kotlin.template.customer.application.CustomerDetails
-import com.kotlin.template.customer.application.CustomerNotFound
 import com.kotlin.template.customer.application.contract.CustomerChange
-import com.kotlin.template.customer.application.create.CreateCustomer
-import com.kotlin.template.customer.application.create.CreateCustomerCommand
-import com.kotlin.template.customer.application.find.FindCustomer
-import com.kotlin.template.customer.application.find.FindCustomerQuery
+import com.kotlin.template.customer.application.exception.CustomerNotFound
 import com.kotlin.template.customer.application.port.*
-import com.kotlin.template.customer.application.publish.PublishCustomerOutbox
+import com.kotlin.template.customer.application.port.CustomerCache
+import com.kotlin.template.customer.application.port.CustomerCreationRequests
+import com.kotlin.template.customer.application.port.CustomerEventPublisher
+import com.kotlin.template.customer.application.port.CustomerIds
+import com.kotlin.template.customer.application.port.CustomerOutbox
+import com.kotlin.template.customer.application.port.PendingCustomerChange
+import com.kotlin.template.customer.application.result.CustomerDetails
+import com.kotlin.template.customer.application.usecase.create.CreateCustomer
+import com.kotlin.template.customer.application.usecase.create.CreateCustomerCommand
+import com.kotlin.template.customer.application.usecase.delivery.PublishCustomerOutbox
+import com.kotlin.template.customer.application.usecase.find.FindCustomer
+import com.kotlin.template.customer.application.usecase.find.FindCustomerQuery
 import com.kotlin.template.customer.domain.model.Customer
 import com.kotlin.template.customer.domain.model.CustomerId
 import com.kotlin.template.customer.domain.repository.CustomerRepository
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
-import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -24,6 +29,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
 
 class CustomerApplicationTests {
     private val now = Instant.now()

@@ -1,17 +1,17 @@
 package com.kotlin.template.customer.interfaces.rest
 
-import com.kotlin.template.customer.application.CustomerEmailAlreadyRegistered
-import com.kotlin.template.customer.application.CustomerNotFound
-import com.kotlin.template.customer.application.port.CustomerCreationConflict
+import com.kotlin.template.customer.application.exception.CustomerCreationConflict
+import com.kotlin.template.customer.application.exception.CustomerEmailAlreadyRegistered
+import com.kotlin.template.customer.application.exception.CustomerNotFound
 import com.kotlin.template.customer.domain.exception.CustomerRevisionConflict
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeoutException
 import org.springframework.dao.DataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.transaction.TransactionException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeoutException
 
 @RestControllerAdvice
 class CustomerExceptionHandler {

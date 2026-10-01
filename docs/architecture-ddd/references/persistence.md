@@ -21,12 +21,12 @@ JPA Entities não devem ser automaticamente tratadas como Domain Entities.
 
 ```text
 domain/
-└── OrderRepository
+└── repository/OrderRepository.kt
 
 infrastructure/persistence/
-├── OrderJpaEntity
-├── SpringDataOrderRepository
-└── JpaOrderRepository
+├── entity/OrderJpaEntity.kt
+├── repository/SpringDataOrderRepository.kt
+└── adapter/JpaOrderRepository.kt
 ```
 
 ## Flyway

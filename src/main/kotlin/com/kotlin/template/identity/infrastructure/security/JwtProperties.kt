@@ -1,9 +1,9 @@
 package com.kotlin.template.identity.infrastructure.security
 
 import jakarta.validation.constraints.NotBlank
+import java.time.Duration
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.validation.annotation.Validated
-import java.time.Duration
 
 @Validated
 @ConfigurationProperties("app.security.jwt")
@@ -16,6 +16,3 @@ class JwtProperties(
         require(accessTokenTtl >= Duration.ofSeconds(1)) { "JWT access token TTL must be at least one second" }
     }
 }
-
-@ConfigurationProperties("app.security.cors")
-class CorsProperties(val allowedOrigins: List<String> = emptyList())

@@ -1,6 +1,9 @@
 package com.kotlin.template.customer
 
 import com.kotlin.template.TestcontainersConfiguration
+import java.time.Duration
+import java.util.*
+import kotlin.test.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,9 +18,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import tools.jackson.databind.ObjectMapper
-import java.time.Duration
-import java.util.*
-import kotlin.test.assertEquals
 
 @Import(TestcontainersConfiguration::class)
 @AutoConfigureMockMvc

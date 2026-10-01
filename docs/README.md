@@ -2,7 +2,7 @@
 
 ## Architecture
 
-See [Architecture](architecture/architecture.md).
+See [Architecture](architecture-ddd/architecture.md).
 
 Defines the structural and architectural decisions of the project.
 

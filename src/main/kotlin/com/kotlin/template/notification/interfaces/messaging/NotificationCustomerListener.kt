@@ -1,8 +1,7 @@
 package com.kotlin.template.notification.interfaces.messaging
 
 import com.kotlin.template.customer.application.contract.CustomerChange
-import com.kotlin.template.customer.application.contract.CustomerEventDeliveryFailure
-import com.kotlin.template.notification.application.record.NotifyCustomerChange
+import com.kotlin.template.notification.application.usecase.record.NotifyCustomerChange
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.kafka.annotation.KafkaListener
@@ -23,7 +22,7 @@ class NotificationCustomerListener(private val mapper: ObjectMapper, private val
             record.execute(change)
         } catch (_: Exception) {
             // Do not allow deserialization errors to echo a rejected payload into logs or DLT.
-            throw CustomerEventDeliveryFailure()
+            throw NotificationCustomerDeliveryFailure()
         }
     }
 }

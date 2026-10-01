@@ -30,20 +30,20 @@ Preferir organização por caso de uso:
 
 ```text
 application/
-├── create/
-├── update/
-├── delete/
-└── find/
+├── usecase/create/
+├── usecase/update/
+├── usecase/delete/
+└── usecase/find/
 ```
 
 | Tipo                  | Local                                           |
 |-----------------------|-------------------------------------------------|
-| Use Case              | `application/<feature>/`                        |
-| Command               | `application/<feature>/`                        |
-| Query                 | `application/<feature>/`                        |
-| Result                | `application/<feature>/`                        |
+| Use Case              | `application/usecase/<feature>/`                        |
+| Command               | `application/usecase/<feature>/`                        |
+| Query                 | `application/usecase/<feature>/`                        |
+| Result                | `application/usecase/<feature>/`                        |
 | Outbound Port         | `application/port/`                             |
-| Application Exception | próximo ao use case ou `application/exception/` |
+| Application Exception | `application/exception/` |
 
 ## Interfaces
 
@@ -54,8 +54,8 @@ application/
 | Tipo                   | Local                   |
 |------------------------|-------------------------|
 | REST Controller        | `interfaces/rest/`      |
-| Request DTO            | `interfaces/rest/`      |
-| Response DTO           | `interfaces/rest/`      |
+| Request DTO            | `interfaces/rest/request/`      |
+| Response DTO           | `interfaces/rest/response/`      |
 | REST Exception Handler | `interfaces/rest/`      |
 | Kafka Listener         | `interfaces/messaging/` |
 | Scheduled input job    | `interfaces/scheduler/` |
@@ -68,10 +68,10 @@ application/
 
 | Tipo                   | Local                                                             |
 |------------------------|-------------------------------------------------------------------|
-| JPA Entity             | `infrastructure/persistence/`                                     |
-| Spring Data Repository | `infrastructure/persistence/`                                     |
-| Repository Adapter     | `infrastructure/persistence/`                                     |
-| Persistence Mapper     | `infrastructure/persistence/`                                     |
+| JPA Entity             | `infrastructure/persistence/entity/`                                     |
+| Spring Data Repository | `infrastructure/persistence/repository/`                                     |
+| Repository Adapter     | `infrastructure/persistence/adapter/`                                     |
+| Persistence Mapper     | `infrastructure/persistence/adapter/`                                     |
 | Redis Adapter          | `infrastructure/cache/`                                           |
 | Kafka Publisher        | `infrastructure/messaging/`                                       |
 | External HTTP Client   | `infrastructure/client/`                                          |
@@ -102,3 +102,7 @@ mapper/
 ```
 
 com transformações de toda a aplicação.
+
+Resultados compartilhados ficam em `application/result/`; contratos públicos de
+integração em `application/contract/`. Cada tipo principal público fica em um
+arquivo homônimo. Ver [padrão completo](../architecture-ddd/references/packaging.md).

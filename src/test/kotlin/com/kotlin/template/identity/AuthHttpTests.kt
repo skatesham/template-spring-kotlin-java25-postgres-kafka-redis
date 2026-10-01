@@ -1,8 +1,8 @@
 package com.kotlin.template.identity
 
-import com.kotlin.template.identity.application.currentuser.CurrentUser
-import com.kotlin.template.identity.application.login.Login
-import com.kotlin.template.identity.application.signup.Signup
+import com.kotlin.template.identity.application.usecase.currentuser.CurrentUser
+import com.kotlin.template.identity.application.usecase.login.Login
+import com.kotlin.template.identity.application.usecase.signup.Signup
 import com.kotlin.template.identity.domain.model.User
 import com.kotlin.template.identity.domain.repository.UserRepository
 import com.kotlin.template.identity.infrastructure.security.JwtAccessTokenIssuer
@@ -11,6 +11,8 @@ import com.kotlin.template.identity.infrastructure.security.SpringPasswordHasher
 import com.kotlin.template.identity.interfaces.rest.AuthController
 import com.kotlin.template.identity.interfaces.rest.IdentityExceptionHandler
 import com.kotlin.template.identity.interfaces.rest.UserController
+import java.time.Instant
+import java.util.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,8 +30,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import tools.jackson.databind.ObjectMapper
-import java.time.Instant
-import java.util.*
 
 @WebMvcTest(
     controllers = [AuthController::class, UserController::class], properties = [

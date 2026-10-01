@@ -1,5 +1,11 @@
 package com.kotlin.template.identity
 
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,12 +23,6 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.postgresql.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 import tools.jackson.databind.ObjectMapper
-import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
 @Testcontainers
 @AutoConfigureMockMvc

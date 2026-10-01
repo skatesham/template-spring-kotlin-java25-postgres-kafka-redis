@@ -6,11 +6,11 @@ import com.kotlin.template.customer.domain.event.CustomerChangeKind
 import com.kotlin.template.customer.domain.exception.CustomerRevisionConflict
 import com.kotlin.template.customer.domain.model.Customer
 import com.kotlin.template.customer.domain.model.CustomerId
-import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import org.junit.jupiter.api.Test
 
 class CustomerDomainTests {
     private val generator = Generators.timeBasedEpochGenerator()

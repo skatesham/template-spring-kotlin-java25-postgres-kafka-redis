@@ -1,21 +1,21 @@
 package com.kotlin.template.customer
 
 import com.fasterxml.uuid.Generators
-import com.kotlin.template.customer.application.delete.DeleteCustomer
-import com.kotlin.template.customer.application.delete.DeleteExpiredCustomers
 import com.kotlin.template.customer.application.port.CustomerIds
+import com.kotlin.template.customer.application.usecase.delete.DeleteCustomer
+import com.kotlin.template.customer.application.usecase.retention.DeleteExpiredCustomers
 import com.kotlin.template.customer.domain.model.Customer
 import com.kotlin.template.customer.domain.model.CustomerEmail
 import com.kotlin.template.customer.domain.model.CustomerId
 import com.kotlin.template.customer.domain.repository.CustomerRepository
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 class CustomerRetentionConcurrencyTests {
     @ParameterizedTest

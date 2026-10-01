@@ -6,23 +6,6 @@ import com.kotlin.template.customer.domain.exception.CustomerRevisionConflict
 import java.time.Instant
 import java.util.*
 
-@JvmInline
-value class CustomerId(val value: UUID)
-
-@JvmInline
-value class CustomerEmail(val value: String) {
-    init {
-        require(
-            value == value.trim()
-                .lowercase(Locale.ROOT) && value.length <= 254 && value.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+"))
-        )
-    }
-
-    companion object {
-        fun of(value: String) = CustomerEmail(value.trim().lowercase(Locale.ROOT))
-    }
-}
-
 class Customer(
     val id: CustomerId,
     val ownerId: UUID,

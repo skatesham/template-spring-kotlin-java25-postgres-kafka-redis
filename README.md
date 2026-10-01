@@ -274,20 +274,20 @@ src/main/kotlin/com/kotlin/template/
 ├── customer/       # Aggregate, casos de uso, REST, JPA, Redis, Outbox e Kafka
 ├── audit/          # Listener, caso de uso e persistência da auditoria
 ├── notification/   # Listener, persistência e API da inbox
-└── shared/         # Configuração OpenAPI
+└── shared/         # OpenAPI, scheduling e mecanismos técnicos reutilizados
 
 # Nos contextos, conforme a responsabilidade:
 <context>/domain/          # Invariantes, eventos e repository ports; sem Spring/JPA
-<context>/application/     # Commands/queries, casos de uso e portas de saída
-<context>/infrastructure/  # Adapters JPA, SQL, Redis, Kafka e configuração
-<context>/interfaces/      # REST, listeners e jobs de entrada
+<context>/application/     # usecase/<intenção>, port, result, contract e exception
+<context>/infrastructure/  # persistence/{entity,repository,adapter}, cache, messaging e config
+<context>/interfaces/      # rest/{request,response}, listeners e jobs do contexto
 
 src/main/resources/db/migration/
 ├── V1__create_users_and_roles.sql
 └── V2__customer_outbox_and_consumers.sql
 ```
 
-Os contextos se comunicam por contratos de aplicação/eventos, sem importar repositórios internos entre si. Transações ficam nos casos de uso. As convenções estão na [skill spring-kotlin](.agents/skills/spring-kotlin/SKILL.md) e no [AGENTS.md](AGENTS.md).
+Os contextos se comunicam por contratos de aplicação/eventos, sem importar repositórios internos entre si. Cada tipo principal público tem arquivo homônimo; requests e responses não usam uma pasta `dto`. A [estrutura detalhada](docs/architecture-ddd/references/packaging.md) inclui as regras de localização e documentação OpenAPI. Transações ficam nos casos de uso. As convenções estão na [skill spring-kotlin](.agents/skills/spring-kotlin/SKILL.md) e no [AGENTS.md](AGENTS.md).
 
 | Ferramentas | Uso |
 | --- | --- |

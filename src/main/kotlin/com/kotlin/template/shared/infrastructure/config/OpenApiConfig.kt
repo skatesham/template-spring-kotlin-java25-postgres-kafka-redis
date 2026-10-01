@@ -14,7 +14,7 @@ class OpenApiConfig {
     fun openApi(): OpenAPI = OpenAPI()
         .info(
             Info().title("Template API").version("v1")
-                .description("API de usuários e autenticação. Cadastre-se em /api/auth/signup, faça login em /api/auth/login e use o accessToken no botão Authorize. Senhas e hashes nunca são retornados. Roles são atribuídas pelo servidor.")
+                .description("API de autenticação, usuários, customers e notificações. Customers pertencem ao usuário autenticado; alterações geram eventos assíncronos para auditoria e notificações. As rotas de recuperação de entrega exigem ADMIN. Cadastre-se em /api/auth/signup, faça login em /api/auth/login e use o accessToken no botão Authorize. Senhas e hashes nunca são retornados. Roles são atribuídas pelo servidor.")
         )
         .components(
             Components().addSecuritySchemes(

@@ -16,12 +16,12 @@ A arquitetura combina:
 ## Estrutura principal
 
 ```text
-src/main/kotlin/com/example/app/
+src/main/kotlin/com/kotlin/template/
 ├── shared/
 ├── customer/
-├── order/
-├── payment/
-└── catalog/
+├── identity/
+├── audit/
+└── notification/
 ```
 
 Cada bounded context segue:
@@ -33,6 +33,9 @@ Cada bounded context segue:
 ├── infrastructure/
 └── interfaces/
 ```
+
+A organização interna e as regras para arquivos, REST/OpenAPI e crescimento
+estão em [Empacotamento e localização](references/packaging.md).
 
 ## Regra de dependência
 

@@ -1,10 +1,11 @@
 # Casos de uso, transações e consistência
 
-Organizar cada intenção em `<base-package>.<context>.application.<use-case>`.
-Manter o caso de uso e seus command/query/result próximos:
+Organizar cada intenção em `<base-package>.<context>.application.usecase.<use-case>`.
+Manter o caso de uso e seus command/query/result em arquivos homônimos próximos;
+resultados compartilhados ficam em `application/result/`:
 
 ```text
-application/confirm/
+application/usecase/confirm/
 ├── ConfirmOrder.kt
 ├── ConfirmOrderCommand.kt
 └── ConfirmOrderResult.kt

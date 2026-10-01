@@ -1,8 +1,7 @@
 package com.kotlin.template.audit.interfaces.messaging
 
-import com.kotlin.template.audit.application.record.RecordCustomerAudit
+import com.kotlin.template.audit.application.usecase.record.RecordCustomerAudit
 import com.kotlin.template.customer.application.contract.CustomerChange
-import com.kotlin.template.customer.application.contract.CustomerEventDeliveryFailure
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.kafka.annotation.KafkaListener
@@ -23,7 +22,7 @@ class AuditCustomerListener(private val mapper: ObjectMapper, private val record
             record.execute(change)
         } catch (_: Exception) {
             // Do not allow deserialization errors to echo a rejected payload into logs or DLT.
-            throw CustomerEventDeliveryFailure()
+            throw AuditCustomerDeliveryFailure()
         }
     }
 }

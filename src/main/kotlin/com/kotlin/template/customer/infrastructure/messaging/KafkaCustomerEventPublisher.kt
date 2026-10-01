@@ -2,10 +2,10 @@ package com.kotlin.template.customer.infrastructure.messaging
 
 import com.kotlin.template.customer.application.contract.CustomerChange
 import com.kotlin.template.customer.application.port.CustomerEventPublisher
+import java.util.concurrent.TimeUnit
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
-import java.util.concurrent.TimeUnit
 
 @Component
 class KafkaCustomerEventPublisher(private val kafka: KafkaTemplate<String, String>, private val mapper: ObjectMapper) :

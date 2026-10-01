@@ -1,16 +1,16 @@
 package com.kotlin.template.customer.infrastructure.cache
 
-import com.kotlin.template.customer.application.CustomerDetails
 import com.kotlin.template.customer.application.port.CustomerCache
+import com.kotlin.template.customer.application.result.CustomerDetails
 import io.micrometer.core.instrument.MeterRegistry
+import java.time.Duration
+import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 import org.springframework.transaction.support.TransactionSynchronization
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import tools.jackson.databind.ObjectMapper
-import java.time.Duration
-import java.util.*
 
 @Component
 class RedisCustomerCache(

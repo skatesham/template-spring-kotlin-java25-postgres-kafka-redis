@@ -139,12 +139,16 @@ TLS, backups e segredo do ambiente devem seguir os requisitos de implantação.
 
 A política técnica demonstrativa elimina Customer sem alteração por 365 dias, pelo caso de uso normal, gerando evento de
 remoção. Um job horário trata lotes de 100, preservando perfis atualizados em concorrência. Outbox publicada, auditoria
-e notificações são removidas depois de 30 dias; cursors somente 31 dias após o evento de remoção. O cursor de um
+e notificações são removidas depois de 30 dias, por jobs próprios de cada contexto; cursors somente 31 dias após o evento de remoção. O cursor de um
 Customer ativo permanece durante seu ciclo de vida, mesmo quando as evidências individuais expiram, para permitir
 atualizações após longos períodos de inatividade. Contratos rejeitam eventos com mais de 30 dias, impedindo recriação de
 efeitos depois da expiração da deduplicação. Chaves/fingerprints de criação expiram em 24 horas. Kafka e DLT têm
 retenção de 7 dias ou 100 MiB por partição, o que ocorrer primeiro. O responsável pelo tratamento deve validar
 finalidade, fundamento e prazos antes de produção; a feature não presume uma base legal.
+
+Os jobs independentes preservam a propriedade `app.customer.jobs.enabled` e o intervalo
+`app.customer.retention.poll-ms`, com uma hora de espera inicial por padrão. Não há
+garantia de ordem ou transação conjunta entre retenção de customer, audit e notification.
 
 Registros PENDING/FAILED são evidência operacional e não são apagados automaticamente antes da recuperação: precisam de
 revisão diária, resolução ou descarte aprovado pelo responsável, incluindo a decisão sobre a cadeia posterior. Eventos

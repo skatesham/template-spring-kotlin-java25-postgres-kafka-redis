@@ -2,6 +2,9 @@ package com.kotlin.template.identity.infrastructure.security
 
 import jakarta.servlet.DispatcherType
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
+import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -23,9 +26,6 @@ import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.util.*
-import javax.crypto.SecretKey
-import javax.crypto.spec.SecretKeySpec
 
 @Configuration(proxyBeanMethods = false)
 @EnableMethodSecurity

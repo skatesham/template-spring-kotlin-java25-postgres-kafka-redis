@@ -1,15 +1,15 @@
 # JPA, PostgreSQL e Flyway
 
 Colocar persistência em
-`<base-package>.<context>.infrastructure.persistence`.
+`<base-package>.<context>.infrastructure.persistence`, com os papéis abaixo.
 
 | Papel                         | Exemplo                     |
 |-------------------------------|-----------------------------|
 | Modelo de domínio             | `Order`                     |
 | Porta em `domain/repository/` | `OrderRepository`           |
-| Modelo JPA                    | `OrderJpaEntity`            |
-| Interface Spring Data interna | `SpringDataOrderRepository` |
-| Adapter da porta              | `JpaOrderRepository`        |
+| Modelo JPA em `entity/`       | `OrderJpaEntity`            |
+| Spring Data em `repository/`  | `SpringDataOrderRepository` |
+| Adapter em `adapter/`         | `JpaOrderRepository`        |
 
 ## Fronteira
 
@@ -47,3 +47,7 @@ retenção e eliminação definidas para a funcionalidade.
 Verificar comportamento específico de SQL, constraints e mapeamento com
 PostgreSQL real via Testcontainers quando a alteração depender desses aspectos.
 Não substituir PostgreSQL automaticamente por H2.
+
+Adapters JDBC também ficam em `adapter/`. Cada tipo principal fica em arquivo
+homônimo. Mappers pequenos podem ser privados no adapter; mappers independentes
+ficam próximos dele. Não criar `entity/` e `repository/` em contextos somente JDBC.

@@ -1,6 +1,6 @@
 package com.kotlin.template.notification.application.port
 
-import com.kotlin.template.notification.application.find.NotificationDetails
+import com.kotlin.template.notification.application.result.NotificationDetails
 import java.util.*
 
 fun interface NotificationInbox {

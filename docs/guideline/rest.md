@@ -67,3 +67,6 @@ Regras de negócio continuam no domínio.
 Usar `@RestControllerAdvice` para mapear erros internos para HTTP.
 
 O domínio não deve conhecer HTTP status codes.
+
+A localização detalhada de arquivos e a documentação dos contratos seguem
+[Empacotamento e localização](../architecture-ddd/references/packaging.md).

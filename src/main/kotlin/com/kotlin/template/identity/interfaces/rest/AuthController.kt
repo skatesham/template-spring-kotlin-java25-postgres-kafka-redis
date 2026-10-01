@@ -1,7 +1,11 @@
 package com.kotlin.template.identity.interfaces.rest
 
-import com.kotlin.template.identity.application.login.Login
-import com.kotlin.template.identity.application.signup.Signup
+import com.kotlin.template.identity.application.usecase.login.Login
+import com.kotlin.template.identity.application.usecase.signup.Signup
+import com.kotlin.template.identity.interfaces.rest.request.LoginRequest
+import com.kotlin.template.identity.interfaces.rest.request.SignupRequest
+import com.kotlin.template.identity.interfaces.rest.response.LoginResponse
+import com.kotlin.template.identity.interfaces.rest.response.UserResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

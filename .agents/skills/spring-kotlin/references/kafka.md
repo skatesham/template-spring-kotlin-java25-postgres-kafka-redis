@@ -42,3 +42,7 @@ Tratar possibilidade de reentrega e definir idempotência e recuperação de
 falhas conforme o fluxo. Não presumir entrega exatamente uma vez de ponta a
 ponta. Verificar contratos, serialização e fluxos de integração relevantes
 quando a mudança afetar o comportamento dessas fronteiras.
+
+O contexto consumidor controla sua factory, DLT e configuração. Compartilhar
+apenas o mecanismo técnico comum. Exceções do listener ficam na sua interface
+de mensageria, fora dos contratos públicos do produtor.

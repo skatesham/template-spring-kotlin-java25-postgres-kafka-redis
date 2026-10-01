@@ -4,11 +4,11 @@ import com.kotlin.template.identity.domain.model.Role
 import com.kotlin.template.identity.domain.model.User
 import com.kotlin.template.identity.infrastructure.security.JwtProperties
 import com.kotlin.template.identity.infrastructure.security.SecurityConfig
-import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import org.junit.jupiter.api.Test
 
 class IdentityDomainAndSecurityTests {
     @Test

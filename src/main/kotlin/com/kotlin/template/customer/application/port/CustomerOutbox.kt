@@ -4,7 +4,6 @@ import com.kotlin.template.customer.application.contract.CustomerChange
 import java.time.Instant
 import java.util.*
 
-data class PendingCustomerChange(val change: CustomerChange, val attempts: Int)
 interface CustomerOutbox {
     fun findPublished(id: UUID): CustomerChange?
     fun retryFailed(id: UUID): Boolean
@@ -13,8 +12,4 @@ interface CustomerOutbox {
     fun published(id: UUID)
     fun failed(id: UUID, attempts: Int, nextAttempt: Instant, exhausted: Boolean)
     fun purge(before: Instant)
-}
-
-fun interface CustomerEventPublisher {
-    fun publish(change: CustomerChange)
 }

@@ -1,7 +1,9 @@
 # REST e contratos HTTP
 
-Colocar controllers, requests, responses, mappers HTTP e exception handlers em
-`<base-package>.<context>.interfaces.rest`. Controllers são adapters de entrada.
+Colocar controllers e exception handlers em
+`<base-package>.<context>.interfaces.rest`, requests em `.rest.request` e
+responses em `.rest.response`. Não criar package `dto`. Cada tipo principal
+público fica em arquivo homônimo. Controllers são adapters de entrada.
 
 ```text
 HTTP → Request DTO → Command/Query → Use case → Result → Response DTO
@@ -42,3 +44,13 @@ JPA executa operações bloqueantes. Em WebFlux, tratar explicitamente a
 fronteira de execução dessas operações e da transação para não bloquear o
 event loop. Não presumir que `suspend` ou um retorno `Mono` torna JPA reativo.
 Evitar chamadas `block()` dentro do fluxo HTTP reativo.
+
+## OpenAPI
+
+Documentar operações e tags, os status reais de sucesso/erro, autenticação e
+permissões, headers e parâmetros. Explicar idempotência, paginação e controle de
+revisão quando aplicáveis. Documentar schemas dos requests/responses com
+significado, formato, limites e exemplos sintéticos. Não documentar uma entidade
+JPA ou resultado de aplicação como body HTTP. Respostas sem corpo precisam de
+conteúdo vazio; erros seguem o contrato real, como ProblemDetail. Ocultar o
+principal JWT da lista de parâmetros e verificar o JSON gerado em `/v3/api-docs`.

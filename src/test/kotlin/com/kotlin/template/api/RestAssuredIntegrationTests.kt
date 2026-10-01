@@ -1,13 +1,22 @@
 package com.kotlin.template.api
 
 import com.kotlin.template.TestcontainersConfiguration
+import com.kotlin.template.audit.interfaces.scheduler.AuditRetentionJob
 import com.kotlin.template.customer.interfaces.scheduler.CustomerJobs
+import com.kotlin.template.notification.interfaces.scheduler.NotificationRetentionJob
 import io.micrometer.core.instrument.MeterRegistry
 import io.restassured.RestAssured.given
 import io.restassured.builder.RequestSpecBuilder
 import io.restassured.http.ContentType
 import io.restassured.response.Response
 import io.restassured.specification.RequestSpecification
+import java.time.Duration
+import java.time.Instant
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import kotlin.test.*
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,13 +36,6 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.test.annotation.DirtiesContext
 import org.testcontainers.kafka.KafkaContainer
 import tools.jackson.databind.ObjectMapper
-import java.time.Duration
-import java.time.Instant
-import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
-import kotlin.test.*
 
 /** Real sockets, real JWTs, real infrastructure; no mocked security or global RestAssured state. */
 @Import(TestcontainersConfiguration::class)
@@ -63,6 +65,10 @@ class RestAssuredIntegrationTests {
     lateinit var meters: MeterRegistry
     @Autowired
     lateinit var jobs: CustomerJobs
+    @Autowired
+    lateinit var auditRetention: AuditRetentionJob
+    @Autowired
+    lateinit var notificationRetention: NotificationRetentionJob
     @Autowired
     lateinit var kafka: KafkaContainer
     private lateinit var base: RequestSpecification
@@ -532,6 +538,8 @@ class RestAssuredIntegrationTests {
             )
         }
         jobs.retention()
+        auditRetention.retention()
+        notificationRetention.retention()
         problem(request(account.token).get("/api/customers/$inactive"), 404)
         request(account.token).get("/api/customers/$active").then().statusCode(200)
         assertNull(redis.opsForValue().get("customer:v1:$inactive:1"))
@@ -578,9 +586,58 @@ class RestAssuredIntegrationTests {
     fun `public health Swagger and OpenAPI document the running API`() {
         request().get("/actuator/health").then().statusCode(200)
             .body("status", equalTo("UP"), "components", nullValue())
-        request().get("/v3/api-docs").then().statusCode(200)
+        val document = mapper.readTree(request().get("/v3/api-docs").then().statusCode(200)
             .body("components.securitySchemes.bearerAuth.scheme", equalTo("bearer"))
             .body("paths.'/api/customers'.post", notNullValue(), "paths.'/api/notifications'.get", notNullValue())
+            .extract().asString())
+        val schemas = document["components"]["schemas"]
+        for (name in listOf("CreateCustomerRequest", "UpdateCustomerRequest", "CustomerResponse")) {
+            assertTrue(schemas[name]["description"].asString().isNotBlank(), name)
+            for (property in schemas[name]["properties"]) {
+                assertTrue(property["description"].asString().isNotBlank(), name)
+            }
+        }
+        assertEquals("uuid", schemas["CustomerResponse"]["properties"]["id"]["format"].asString())
+        assertEquals("date-time", schemas["CustomerResponse"]["properties"]["createdAt"]["format"].asString())
+        assertTrue(schemas["UpdateCustomerRequest"]["required"].any { it.asString() == "revision" })
+        val operations = listOf(
+            Triple("/api/customers", "post", "201"),
+            Triple("/api/customers", "get", "200"),
+            Triple("/api/customers/{id}", "get", "200"),
+            Triple("/api/customers/{id}", "put", "200"),
+            Triple("/api/customers/{id}", "delete", "204"),
+            Triple("/api/admin/customer-delivery/{eventId}/retry", "post", "202"),
+            Triple("/api/admin/customer-delivery/{eventId}/replay", "post", "202"),
+        )
+        for ((path, method, success) in operations) {
+            val operation = document["paths"][path][method]
+            assertTrue(operation["summary"].asString().isNotBlank(), "$method $path")
+            assertTrue(operation["description"].asString().isNotBlank(), "$method $path")
+            assertTrue(operation["parameters"].none { it["name"].asString() == "jwt" }, "$method $path")
+            assertEquals("object", document["components"]["schemas"]["ProblemDetail"]["type"].asString())
+            assertTrue(operation["responses"].has("401"), "$method $path")
+            assertTrue(operation["responses"].has("503"), "$method $path")
+            assertTrue(operation["responses"]["400"]["content"].has("application/problem+json"), "$method $path")
+            assertTrue(operation["responses"].has(success), "$method $path")
+            if (success in listOf("202", "204")) {
+                assertFalse(operation["responses"][success].has("content"), "$method $path")
+            }
+            if ("/admin/" in path) {
+                assertTrue(operation["responses"].has("403"), "$method $path")
+                assertTrue(operation["description"].asString().contains("ADMIN"), "$method $path")
+            }
+        }
+        val create = document["paths"]["/api/customers"]["post"]
+        assertTrue(create["parameters"].any {
+            it["name"].asString() == "Idempotency-Key" && it["in"].asString() == "header" && it["required"].asBoolean()
+        })
+        assertTrue(create["responses"]["201"]["headers"].has("Location"))
+        assertEquals("#/components/schemas/CreateCustomerRequest",
+            create["requestBody"]["content"]["application/json"]["schema"]["\$ref"].asString())
+        val list = document["paths"]["/api/customers"]["get"]
+        assertEquals("array", list["responses"]["200"]["content"]["application/json"]["schema"]["type"].asString())
+        assertTrue(list["parameters"].any { it["name"].asString() == "after" })
+        assertTrue(list["parameters"].any { it["name"].asString() == "limit" })
         request().get("/swagger-ui/index.html").then().statusCode(200).contentType(containsString("text/html"))
     }
 

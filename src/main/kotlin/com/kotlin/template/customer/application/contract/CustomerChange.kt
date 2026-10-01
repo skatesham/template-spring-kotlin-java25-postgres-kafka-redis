@@ -28,5 +28,3 @@ data class CustomerChange(
         )
     }
 }
-
-class CustomerEventDeliveryFailure : RuntimeException("Customer event delivery failed")

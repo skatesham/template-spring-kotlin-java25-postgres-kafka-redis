@@ -5,7 +5,7 @@ Cada caso de uso deve representar uma intenção explícita da aplicação.
 Exemplo:
 
 ```text
-<context>/application/confirm/
+<context>/application/usecase/confirm/
 ├── ConfirmOrderCommand.kt
 ├── ConfirmOrder.kt
 └── ConfirmOrderResult.kt

@@ -8,5 +8,3 @@ interface CustomerCreationRequests {
     fun complete(ownerId: UUID, key: UUID, customerId: UUID)
     fun purge()
 }
-
-class CustomerCreationConflict : RuntimeException("Idempotency key already used")
