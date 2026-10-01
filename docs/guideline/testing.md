@@ -44,4 +44,5 @@ Gerar dados sintéticos.
 
 Evitar copiar dumps de produção para desenvolvimento/teste.
 
-Quando um dataset real for inevitável por motivo legítimo, exigir processo específico de anonimização/pseudonimização e controle de acesso.
+Quando um dataset real for inevitável por motivo legítimo, exigir processo específico de anonimização/pseudonimização e
+controle de acesso.

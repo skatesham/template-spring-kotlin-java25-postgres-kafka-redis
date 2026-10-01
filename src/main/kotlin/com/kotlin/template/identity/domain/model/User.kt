@@ -1,7 +1,6 @@
 package com.kotlin.template.identity.domain.model
 
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
 class User(
     val id: UUID,

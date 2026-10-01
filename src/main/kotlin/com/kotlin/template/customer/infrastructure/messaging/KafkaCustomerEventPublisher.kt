@@ -8,8 +8,10 @@ import tools.jackson.databind.ObjectMapper
 import java.util.concurrent.TimeUnit
 
 @Component
-class KafkaCustomerEventPublisher(private val kafka: KafkaTemplate<String, String>, private val mapper: ObjectMapper) : CustomerEventPublisher {
+class KafkaCustomerEventPublisher(private val kafka: KafkaTemplate<String, String>, private val mapper: ObjectMapper) :
+    CustomerEventPublisher {
     override fun publish(change: CustomerChange) {
-        kafka.send("customer.changes.v1", change.customerId.toString(), mapper.writeValueAsString(change)).get(10, TimeUnit.SECONDS)
+        kafka.send("customer.changes.v1", change.customerId.toString(), mapper.writeValueAsString(change))
+            .get(10, TimeUnit.SECONDS)
     }
 }

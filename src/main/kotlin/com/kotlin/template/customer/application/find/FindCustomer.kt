@@ -7,9 +7,10 @@ import com.kotlin.template.customer.domain.model.CustomerId
 import com.kotlin.template.customer.domain.repository.CustomerRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
+import java.util.*
 
 data class FindCustomerQuery(val id: UUID, val ownerId: UUID)
+
 @Service
 class FindCustomer(private val customers: CustomerRepository, private val cache: CustomerCache) {
     // PostgreSQL checks ownership and revision even on a cache hit. This deliberately trades
@@ -18,7 +19,8 @@ class FindCustomer(private val customers: CustomerRepository, private val cache:
     fun execute(query: FindCustomerQuery): CustomerDetails {
         val revision = customers.lockRevision(CustomerId(query.id), query.ownerId) ?: throw CustomerNotFound()
         cache.get(query.id, revision)?.let { return it }
-        val details = CustomerDetails.from(customers.find(CustomerId(query.id), query.ownerId) ?: throw CustomerNotFound())
+        val details =
+            CustomerDetails.from(customers.find(CustomerId(query.id), query.ownerId) ?: throw CustomerNotFound())
         cache.put(details)
         return details
     }

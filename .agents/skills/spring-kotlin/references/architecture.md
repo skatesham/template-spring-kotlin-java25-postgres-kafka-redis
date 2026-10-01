@@ -20,12 +20,12 @@ Manter `shared` pequeno. Evitar packages globais `controller`, `service`,
 
 ## Dependências
 
-| Origem | Pode depender de |
-|---|---|
-| `domain` | Seu próprio domínio e biblioteca padrão |
-| `application` | Domínio e portas que definem suas necessidades |
-| `interfaces` | API de aplicação |
-| `infrastructure` | Domínio, aplicação e bibliotecas técnicas |
+| Origem           | Pode depender de                               |
+|------------------|------------------------------------------------|
+| `domain`         | Seu próprio domínio e biblioteca padrão        |
+| `application`    | Domínio e portas que definem suas necessidades |
+| `interfaces`     | API de aplicação                               |
+| `infrastructure` | Domínio, aplicação e bibliotecas técnicas      |
 
 O domínio não importa Spring, JPA/Hibernate, HTTP, Kafka ou Redis. A aplicação
 não conhece controllers, entidades JPA, `KafkaTemplate` ou `RedisTemplate`.
@@ -38,19 +38,19 @@ repositórios ou detalhes internos de persistência de outro contexto.
 
 ## Localização
 
-| Elemento | Package relativo ao contexto |
-|---|---|
-| Aggregate, entity, value object | `domain/model/` |
-| Evento, exceção, serviço de domínio | `domain/event/`, `domain/exception/`, `domain/service/` |
-| Specification, factory, repository port | `domain/specification/`, `domain/factory/`, `domain/repository/` |
-| Use case, command, query, result | `application/<use-case>/` |
-| Porta de saída de aplicação | `application/port/` |
-| Exceção de aplicação | Próxima do use case ou `application/exception/` |
-| Controller, DTO HTTP, exception handler | `interfaces/rest/` |
-| Listener Kafka, job de entrada | `interfaces/messaging/`, `interfaces/scheduler/` |
-| JPA entity, Spring Data repository, adapter, mapper | `infrastructure/persistence/` |
-| Redis, publisher Kafka, cliente externo | `infrastructure/cache/`, `infrastructure/messaging/`, `infrastructure/client/` |
-| Configuração Spring | Próxima da infraestrutura configurada ou `infrastructure/config/` |
+| Elemento                                            | Package relativo ao contexto                                                   |
+|-----------------------------------------------------|--------------------------------------------------------------------------------|
+| Aggregate, entity, value object                     | `domain/model/`                                                                |
+| Evento, exceção, serviço de domínio                 | `domain/event/`, `domain/exception/`, `domain/service/`                        |
+| Specification, factory, repository port             | `domain/specification/`, `domain/factory/`, `domain/repository/`               |
+| Use case, command, query, result                    | `application/<use-case>/`                                                      |
+| Porta de saída de aplicação                         | `application/port/`                                                            |
+| Exceção de aplicação                                | Próxima do use case ou `application/exception/`                                |
+| Controller, DTO HTTP, exception handler             | `interfaces/rest/`                                                             |
+| Listener Kafka, job de entrada                      | `interfaces/messaging/`, `interfaces/scheduler/`                               |
+| JPA entity, Spring Data repository, adapter, mapper | `infrastructure/persistence/`                                                  |
+| Redis, publisher Kafka, cliente externo             | `infrastructure/cache/`, `infrastructure/messaging/`, `infrastructure/client/` |
+| Configuração Spring                                 | Próxima da infraestrutura configurada ou `infrastructure/config/`              |
 
 Manter mappers junto à fronteira transformada: HTTP na interface, JPA na
 persistência, mensagem no listener e modelo externo no cliente.

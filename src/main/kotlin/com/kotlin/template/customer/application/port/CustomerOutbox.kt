@@ -2,7 +2,7 @@ package com.kotlin.template.customer.application.port
 
 import com.kotlin.template.customer.application.contract.CustomerChange
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class PendingCustomerChange(val change: CustomerChange, val attempts: Int)
 interface CustomerOutbox {
@@ -14,4 +14,7 @@ interface CustomerOutbox {
     fun failed(id: UUID, attempts: Int, nextAttempt: Instant, exhausted: Boolean)
     fun purge(before: Instant)
 }
-fun interface CustomerEventPublisher { fun publish(change: CustomerChange) }
+
+fun interface CustomerEventPublisher {
+    fun publish(change: CustomerChange)
+}

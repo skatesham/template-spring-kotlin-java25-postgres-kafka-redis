@@ -2,7 +2,7 @@ package com.kotlin.template.identity.interfaces.rest
 
 import com.kotlin.template.identity.application.UserDetails
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.UUID
+import java.util.*
 
 @Schema(description = "Dados públicos do usuário, sem senha ou hash.")
 data class UserResponse(

@@ -3,6 +3,7 @@
 # Kotlin Template
 
 [![Line coverage](docs/assets/coverage.svg)](#testes-e-cobertura)
+[![CI](https://github.com/skatesham/template-spring-kotlin-java25-postgres-kafka-redis/actions/workflows/ci.yml/badge.svg)](https://github.com/skatesham/template-spring-kotlin-java25-postgres-kafka-redis/actions/workflows/ci.yml)
 
 API modular em **Kotlin + Spring Boot**, com Spring MVC, JPA bloqueante e domínio independente de infraestrutura. O projeto implementa autenticação e um fluxo completo de Customer: **REST → PostgreSQL + Outbox → Kafka → auditoria e notificações**, com cache Redis, idempotência e recuperação de falhas.
 
@@ -313,6 +314,16 @@ A suíte cobre invariantes, autenticação, isolamento entre proprietários, val
 | Badge versionado | `docs/assets/coverage.svg` |
 
 O badge mostra cobertura de **linhas**, gerada pelo XML da suíte completa. Todas as classes de produção entram na medição, incluindo infraestrutura, configuração e DTOs. `make coverage` recalcula o badge sem serviço externo; uma execução filtrada por `--tests` não pode atualizá-lo. Para investigar cobertura parcial sem alterar o badge, use `./gradlew test --tests '<classe>' jacocoTestReport`. Cobertura mede execução; as asserções verificam o comportamento.
+
+## Integração contínua
+
+O [workflow CI](.github/workflows/ci.yml) executa em pushes, pull requests e manualmente pela aba **Actions** do GitHub. Usa Ubuntu, Temurin JDK 25 e o Gradle Wrapper, com validação do Wrapper e cache de dependências.
+
+O comando `./gradlew build coverage --no-daemon --console=plain` compila, empacota e executa toda a suíte, incluindo RestAssured e as integrações com PostgreSQL, Redis e Kafka via Testcontainers. Não é necessário configurar secrets, criar `.env`, iniciar Compose nem criar tópicos manualmente no CI. Os containers e dados de teste são independentes do ambiente local.
+
+Cada execução disponibiliza relatórios de testes e cobertura como artefatos por 14 dias, inclusive os relatórios disponíveis quando há falha. Em caso de sucesso, também disponibiliza o JAR executável. O badge de cobertura é recalculado no runner e incluído nos artefatos; o CI não faz commits automáticos no repositório. Para atualizar o badge versionado, execute `make coverage` e inclua a alteração no commit.
+
+As actions são fixadas por commit, o token tem somente leitura do repositório e novas execuções cancelam as anteriores da mesma branch ou pull request. O workflow valida e empacota a aplicação; a implantação exige um ambiente de destino.
 
 ## Créditos e licença
 

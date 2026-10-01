@@ -1,6 +1,6 @@
 package com.kotlin.template.customer.application.port
 
-import java.util.UUID
+import java.util.*
 
 /** A PostgreSQL reservation, held in the same transaction as Customer and Outbox. */
 interface CustomerCreationRequests {
@@ -8,4 +8,5 @@ interface CustomerCreationRequests {
     fun complete(ownerId: UUID, key: UUID, customerId: UUID)
     fun purge()
 }
+
 class CustomerCreationConflict : RuntimeException("Idempotency key already used")

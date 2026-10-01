@@ -5,15 +5,17 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 
 @Import(TestcontainersConfiguration::class)
-@SpringBootTest(properties = [
-    "app.security.jwt.secret=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-    "spring.datasource.password=test",
-    "spring.docker.compose.enabled=false",
-])
+@SpringBootTest(
+    properties = [
+        "app.security.jwt.secret=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "spring.datasource.password=test",
+        "spring.docker.compose.enabled=false",
+    ]
+)
 class TemplateApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
+    @Test
+    fun contextLoads() {
+    }
 
 }

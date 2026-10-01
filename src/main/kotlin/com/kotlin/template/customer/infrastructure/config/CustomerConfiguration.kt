@@ -8,8 +8,10 @@ import java.time.Clock
 
 @Configuration(proxyBeanMethods = false)
 class CustomerConfiguration {
-    @Bean fun customerClock(): Clock = Clock.systemUTC()
-    @Bean fun customerIds(): CustomerIds {
+    @Bean
+    fun customerClock(): Clock = Clock.systemUTC()
+    @Bean
+    fun customerIds(): CustomerIds {
         val generator = Generators.timeBasedEpochGenerator()
         return CustomerIds { generator.generate() }
     }

@@ -4,14 +4,14 @@ Escolher verificações pelo comportamento alterado e pelo pedido do usuário.
 Não exigir a inicialização de toda a aplicação para uma regra de domínio nem
 adicionar testes que apenas repetem a implementação.
 
-| Fronteira | Estratégia |
-|---|---|
-| Domínio | Unit tests sem Spring e sem banco; preferencialmente sem mocks |
-| Aplicação | Casos de uso com ports substituídos por fakes/mocks quando adequado |
+| Fronteira      | Estratégia                                                                        |
+|----------------|-----------------------------------------------------------------------------------|
+| Domínio        | Unit tests sem Spring e sem banco; preferencialmente sem mocks                    |
+| Aplicação      | Casos de uso com ports substituídos por fakes/mocks quando adequado               |
 | JPA/PostgreSQL | Testcontainers com PostgreSQL real para SQL, constraints e mapeamentos relevantes |
-| Redis | Container real para comportamento de TTL, serialização e cache relevantes |
-| Kafka | Serialização, contratos e fluxos importantes de integração |
-| REST | Status, validação, contrato, autorização e mapeamento de erros |
+| Redis          | Container real para comportamento de TTL, serialização e cache relevantes         |
+| Kafka          | Serialização, contratos e fluxos importantes de integração                        |
+| REST           | Status, validação, contrato, autorização e mapeamento de erros                    |
 
 ## Infraestrutura e execução
 

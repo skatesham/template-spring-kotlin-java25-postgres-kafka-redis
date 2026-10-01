@@ -1,8 +1,8 @@
 package com.kotlin.template.identity.application.signup
 
+import com.kotlin.template.identity.application.UserDetails
 import com.kotlin.template.identity.application.exception.EmailAlreadyRegistered
 import com.kotlin.template.identity.application.port.PasswordHasher
-import com.kotlin.template.identity.application.UserDetails
 import com.kotlin.template.identity.domain.model.User
 import com.kotlin.template.identity.domain.repository.UserRepository
 import org.springframework.stereotype.Service

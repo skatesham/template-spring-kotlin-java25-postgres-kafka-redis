@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -23,12 +23,14 @@ class CustomerRetentionConcurrencyTests {
     fun `retention tolerates concurrent changes without deleting a freshly active profile`(scenario: String) {
         val now = Instant.now()
         val generator = Generators.timeBasedEpochGenerator()
-        val id = CustomerId(generator.generate()); val owner = UUID.randomUUID()
+        val id = CustomerId(generator.generate());
+        val owner = UUID.randomUUID()
         val expiredAt = now.minusSeconds(366 * 86400L)
         val old = Customer(id, owner, "Synthetic", CustomerEmail.of("synthetic@example.com"), 1, expiredAt, expiredAt)
         val fresh = Customer(id, owner, "Freshly active", CustomerEmail.of("synthetic@example.com"), 2, expiredAt, now)
         val memory = CustomerApplicationTests.MemoryCustomers()
-        var locks = 0; var deletions = 0
+        var locks = 0;
+        var deletions = 0
         val repository = object : CustomerRepository by memory {
             override fun expired(before: Instant, limit: Int) = listOf(id to owner)
             override fun find(id: CustomerId, ownerId: UUID): Customer? = when (scenario) {
@@ -36,15 +38,25 @@ class CustomerRetentionConcurrencyTests {
                 "updated-before-load" -> fresh
                 else -> old
             }
+
             override fun findForUpdate(id: CustomerId, ownerId: UUID): Customer? {
                 locks++
                 return if (scenario == "removed-before-lock") null else fresh
             }
-            override fun delete(customer: Customer) { deletions++ }
+
+            override fun delete(customer: Customer) {
+                deletions++
+            }
         }
         val outbox = CustomerApplicationTests.MemoryOutbox()
         val clock = Clock.fixed(now, ZoneOffset.UTC)
-        val delete = DeleteCustomer(repository, outbox, CustomerApplicationTests.MemoryCache(), CustomerIds { generator.generate() }, clock)
+        val delete = DeleteCustomer(
+            repository,
+            outbox,
+            CustomerApplicationTests.MemoryCache(),
+            CustomerIds { generator.generate() },
+            clock
+        )
         DeleteExpiredCustomers(repository, delete, clock).execute()
         assertEquals(0, deletions)
         assertTrue(outbox.values.isEmpty())

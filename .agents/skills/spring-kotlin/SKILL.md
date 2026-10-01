@@ -24,19 +24,19 @@ Usar esta skill tanto em implementação quanto em revisão, no escopo solicitad
 
 ## Referências por tarefa
 
-| Quando ler | Referência |
-|---|---|
-| Estrutura, localização de classes e dependências entre camadas/contextos | [Arquitetura](references/architecture.md) |
-| Aggregates, invariantes, value objects, IDs e patterns de domínio | [Domínio](references/domain.md) |
-| Kotlin/Java, nullability, tipos e injeção de dependências | [Kotlin e Java](references/kotlin-java.md) |
-| Commands, queries, casos de uso, transações e consistência | [Aplicação](references/application.md) |
-| Controllers, DTOs, validação, erros e execução HTTP | [REST](references/rest.md) |
-| Repositories, JPA, PostgreSQL e migrations Flyway | [Persistência](references/persistence.md) |
-| Listeners, publicação e contratos de eventos Kafka | [Kafka](references/kafka.md) |
-| Cache, TTL, invalidação e estado temporário Redis | [Redis](references/redis.md) |
-| APIs externas, gateways e tradução de modelos de terceiros | [Integrações](references/integrations.md) |
-| Autorização, segredos ou coleta, exposição e retenção de dados pessoais | [Segurança e privacidade](references/security-privacy.md) |
-| Testes de domínio, aplicação, HTTP ou adapters | [Testes](references/testing.md) |
+| Quando ler                                                               | Referência                                                |
+|--------------------------------------------------------------------------|-----------------------------------------------------------|
+| Estrutura, localização de classes e dependências entre camadas/contextos | [Arquitetura](references/architecture.md)                 |
+| Aggregates, invariantes, value objects, IDs e patterns de domínio        | [Domínio](references/domain.md)                           |
+| Kotlin/Java, nullability, tipos e injeção de dependências                | [Kotlin e Java](references/kotlin-java.md)                |
+| Commands, queries, casos de uso, transações e consistência               | [Aplicação](references/application.md)                    |
+| Controllers, DTOs, validação, erros e execução HTTP                      | [REST](references/rest.md)                                |
+| Repositories, JPA, PostgreSQL e migrations Flyway                        | [Persistência](references/persistence.md)                 |
+| Listeners, publicação e contratos de eventos Kafka                       | [Kafka](references/kafka.md)                              |
+| Cache, TTL, invalidação e estado temporário Redis                        | [Redis](references/redis.md)                              |
+| APIs externas, gateways e tradução de modelos de terceiros               | [Integrações](references/integrations.md)                 |
+| Autorização, segredos ou coleta, exposição e retenção de dados pessoais  | [Segurança e privacidade](references/security-privacy.md) |
+| Testes de domínio, aplicação, HTTP ou adapters                           | [Testes](references/testing.md)                           |
 
 As referências contêm orientações completas para seus próprios assuntos.
 Não precisam de outros documentos para serem usadas. Todos os caminhos desta

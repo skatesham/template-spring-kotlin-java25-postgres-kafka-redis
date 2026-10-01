@@ -4,7 +4,10 @@ import com.kotlin.template.identity.application.port.AccessToken
 import com.kotlin.template.identity.application.port.AccessTokenIssuer
 import com.kotlin.template.identity.domain.model.User
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm
-import org.springframework.security.oauth2.jwt.*
+import org.springframework.security.oauth2.jwt.JwsHeader
+import org.springframework.security.oauth2.jwt.JwtClaimsSet
+import org.springframework.security.oauth2.jwt.JwtEncoder
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters
 import org.springframework.stereotype.Component
 import java.time.Instant
 
@@ -16,7 +19,9 @@ class JwtAccessTokenIssuer(private val encoder: JwtEncoder, private val properti
             .issuedAt(now).expiresAt(now.plus(properties.accessTokenTtl))
             .claim("roles", user.roles.map { it.name }).build()
         val header = JwsHeader.with(MacAlgorithm.HS256).type("JWT").build()
-        return AccessToken(encoder.encode(JwtEncoderParameters.from(header, claims)).tokenValue,
-            properties.accessTokenTtl.seconds)
+        return AccessToken(
+            encoder.encode(JwtEncoderParameters.from(header, claims)).tokenValue,
+            properties.accessTokenTtl.seconds
+        )
     }
 }

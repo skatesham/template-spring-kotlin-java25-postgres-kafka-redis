@@ -4,10 +4,18 @@ import com.kotlin.template.notification.application.port.NotificationInbox
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
-data class NotificationDetails(val eventId: UUID, val customerId: UUID, val revision: Long, val type: String, val occurredAt: Instant)
+data class NotificationDetails(
+    val eventId: UUID,
+    val customerId: UUID,
+    val revision: Long,
+    val type: String,
+    val occurredAt: Instant
+)
+
 @Service
 class FindNotifications(private val inbox: NotificationInbox) {
-    @Transactional(readOnly = true) fun execute(ownerId: UUID) = inbox.find(ownerId)
+    @Transactional(readOnly = true)
+    fun execute(ownerId: UUID) = inbox.find(ownerId)
 }

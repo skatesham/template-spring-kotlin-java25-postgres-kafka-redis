@@ -43,4 +43,5 @@ Implementação:
 RedisOrderCache
 ```
 
-Redis não deve conter regras de negócio nem substituir PostgreSQL como fonte de verdade sem decisão arquitetural explícita.
+Redis não deve conter regras de negócio nem substituir PostgreSQL como fonte de verdade sem decisão arquitetural
+explícita.

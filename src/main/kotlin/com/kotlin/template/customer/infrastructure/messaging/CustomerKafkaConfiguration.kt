@@ -4,9 +4,9 @@ import io.micrometer.core.instrument.MeterRegistry
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.header.internals.RecordHeader
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.config.TopicBuilder
 import org.springframework.kafka.core.ConsumerFactory
@@ -15,28 +15,38 @@ import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.listener.DefaultErrorHandler
 import org.springframework.kafka.listener.RetryListener
 import org.springframework.kafka.support.ExponentialBackOffWithMaxRetries
-import java.util.concurrent.TimeUnit
 import tools.jackson.databind.ObjectMapper
+import java.util.concurrent.TimeUnit
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = ["app.customer.messaging.enabled"], havingValue = "true", matchIfMissing = true)
 class CustomerKafkaConfiguration {
-    @Bean fun customerTopics() = org.springframework.kafka.core.KafkaAdmin.NewTopics(
+    @Bean
+    fun customerTopics() = org.springframework.kafka.core.KafkaAdmin.NewTopics(
         *listOf("customer.changes.v1", "customer.changes.v1.audit.DLT", "customer.changes.v1.notification.DLT").map {
             TopicBuilder.name(it).partitions(3).replicas(1).config("retention.ms", "604800000")
                 .config("retention.bytes", "104857600").build()
-        }.toTypedArray())
+        }.toTypedArray()
+    )
 
-    @Bean fun auditKafkaFactory(consumerFactory: ConsumerFactory<String, String>, kafka: KafkaTemplate<String, String>,
-        meters: MeterRegistry, mapper: ObjectMapper, @Value("\${app.customer.consumer.backoff-ms:1000}") backoff: Long) =
+    @Bean
+    fun auditKafkaFactory(
+        consumerFactory: ConsumerFactory<String, String>, kafka: KafkaTemplate<String, String>,
+        meters: MeterRegistry, mapper: ObjectMapper, @Value("\${app.customer.consumer.backoff-ms:1000}") backoff: Long
+    ) =
         factory("audit", consumerFactory, kafka, meters, mapper, backoff)
 
-    @Bean fun notificationKafkaFactory(consumerFactory: ConsumerFactory<String, String>, kafka: KafkaTemplate<String, String>,
-        meters: MeterRegistry, mapper: ObjectMapper, @Value("\${app.customer.consumer.backoff-ms:1000}") backoff: Long) =
+    @Bean
+    fun notificationKafkaFactory(
+        consumerFactory: ConsumerFactory<String, String>, kafka: KafkaTemplate<String, String>,
+        meters: MeterRegistry, mapper: ObjectMapper, @Value("\${app.customer.consumer.backoff-ms:1000}") backoff: Long
+    ) =
         factory("notification", consumerFactory, kafka, meters, mapper, backoff)
 
-    private fun factory(consumer: String, consumerFactory: ConsumerFactory<String, String>, kafka: KafkaTemplate<String, String>,
-        meters: MeterRegistry, mapper: ObjectMapper, initialBackoff: Long): ConcurrentKafkaListenerContainerFactory<String, String> {
+    private fun factory(
+        consumer: String, consumerFactory: ConsumerFactory<String, String>, kafka: KafkaTemplate<String, String>,
+        meters: MeterRegistry, mapper: ObjectMapper, initialBackoff: Long
+    ): ConcurrentKafkaListenerContainerFactory<String, String> {
         require(initialBackoff > 0)
         val backoff = ExponentialBackOffWithMaxRetries(3).apply {
             initialInterval = initialBackoff; multiplier = 2.0; maxInterval = maxOf(initialBackoff, 10000L)
@@ -54,9 +64,11 @@ class CustomerKafkaConfiguration {
             }.getOrNull()
             eventId?.let { headers.add(RecordHeader("event-id", it.toByteArray())) }
             // Only UUID keys are retained. Payload itself remains in the original topic for 7 days.
-            val key = record.key()?.toString()?.let { runCatching { java.util.UUID.fromString(it).toString() }.getOrNull() }
+            val key =
+                record.key()?.toString()?.let { runCatching { java.util.UUID.fromString(it).toString() }.getOrNull() }
             val dlt = org.apache.kafka.clients.producer.ProducerRecord<String, String>(
-                "customer.changes.v1.$consumer.DLT", record.partition(), key, "{\"status\":\"failed\"}", headers)
+                "customer.changes.v1.$consumer.DLT", record.partition(), key, "{\"status\":\"failed\"}", headers
+            )
             kafka.send(dlt).get(10, TimeUnit.SECONDS) // throw on send failure: original offset must not advance
             meters.counter("customer.consumer.dlt", "consumer", consumer).increment()
         }, backoff)

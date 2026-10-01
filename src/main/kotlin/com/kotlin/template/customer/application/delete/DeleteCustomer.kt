@@ -1,6 +1,5 @@
 package com.kotlin.template.customer.application.delete
 
-import com.kotlin.template.customer.application.CustomerDetails
 import com.kotlin.template.customer.application.CustomerNotFound
 import com.kotlin.template.customer.application.contract.CustomerChange
 import com.kotlin.template.customer.application.port.CustomerCache
@@ -12,12 +11,15 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 import java.time.temporal.ChronoUnit
-import java.util.UUID
+import java.util.*
 
 data class DeleteCustomerCommand(val id: UUID, val ownerId: UUID, val revision: Long)
+
 @Service
-class DeleteCustomer(private val customers: CustomerRepository, private val outbox: CustomerOutbox,
-    private val cache: CustomerCache, private val ids: CustomerIds, private val clock: Clock) {
+class DeleteCustomer(
+    private val customers: CustomerRepository, private val outbox: CustomerOutbox,
+    private val cache: CustomerCache, private val ids: CustomerIds, private val clock: Clock
+) {
     @Transactional
     fun execute(command: DeleteCustomerCommand) {
         val customer = customers.findForUpdate(CustomerId(command.id), command.ownerId) ?: throw CustomerNotFound()
@@ -26,6 +28,6 @@ class DeleteCustomer(private val customers: CustomerRepository, private val outb
         customers.delete(customer)
         customer.events.forEach { outbox.append(CustomerChange.from(it)) }
         cache.evictAfterCommit(command.id, previousRevision)
-        
+
     }
 }

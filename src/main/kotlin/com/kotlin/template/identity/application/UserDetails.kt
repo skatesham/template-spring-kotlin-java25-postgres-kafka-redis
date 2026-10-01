@@ -1,7 +1,7 @@
 package com.kotlin.template.identity.application
 
 import com.kotlin.template.identity.domain.model.User
-import java.util.UUID
+import java.util.*
 
 data class UserDetails(val id: UUID, val name: String, val email: String, val roles: Set<String>) {
     companion object {

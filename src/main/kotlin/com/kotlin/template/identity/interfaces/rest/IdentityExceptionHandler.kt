@@ -21,7 +21,8 @@ class IdentityExceptionHandler : ResponseEntityExceptionHandler() {
         .body(ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Email ou senha inválidos."))
 
     @ExceptionHandler(UserNotFound::class)
-    fun userNotFound(): ProblemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Usuário não encontrado.")
+    fun userNotFound(): ProblemDetail =
+        ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Usuário não encontrado.")
 
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException, headers: HttpHeaders, status: HttpStatusCode, request: WebRequest,

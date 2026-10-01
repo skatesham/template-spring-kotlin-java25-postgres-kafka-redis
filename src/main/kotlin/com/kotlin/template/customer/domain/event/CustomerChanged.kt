@@ -2,7 +2,7 @@ package com.kotlin.template.customer.domain.event
 
 import com.kotlin.template.customer.domain.model.CustomerId
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 enum class CustomerChangeKind { CREATED, UPDATED, DELETED }
 data class CustomerChanged(

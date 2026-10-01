@@ -8,7 +8,7 @@ import jakarta.persistence.EntityManager
 import org.hibernate.exception.ConstraintViolationException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 class JpaUserRepository(
@@ -19,8 +19,10 @@ class JpaUserRepository(
     override fun findById(id: UUID): User? = repository.findById(id).orElse(null)?.toDomain()
 
     override fun create(user: User): User {
-        val entity = UserJpaEntity(user.id, user.name, user.email, user.passwordHash,
-            user.roles.map { entityManager.getReference(RoleJpaEntity::class.java, it.name) }.toSet())
+        val entity = UserJpaEntity(
+            user.id, user.name, user.email, user.passwordHash,
+            user.roles.map { entityManager.getReference(RoleJpaEntity::class.java, it.name) }.toSet()
+        )
         try {
             // Flush aqui permite traduzir também a colisão de cadastros concorrentes.
             repository.saveAndFlush(entity)

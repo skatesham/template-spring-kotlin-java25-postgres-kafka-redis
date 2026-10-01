@@ -21,22 +21,56 @@ class AuthController(private val signup: Signup, private val login: Login) {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirements
-    @Operation(summary = "Cadastrar usuário", description = "Cria um usuário com role USER. Não aceita roles no payload. Faça login após o cadastro.")
+    @Operation(
+        summary = "Cadastrar usuário",
+        description = "Cria um usuário com role USER. Não aceita roles no payload. Faça login após o cadastro."
+    )
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "Usuário cadastrado"),
-        ApiResponse(responseCode = "400", description = "Payload inválido", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = ProblemDetail::class))]),
-        ApiResponse(responseCode = "409", description = "Email já cadastrado", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = ProblemDetail::class))]),
+        ApiResponse(
+            responseCode = "400",
+            description = "Payload inválido",
+            content = [Content(
+                mediaType = "application/problem+json",
+                schema = Schema(implementation = ProblemDetail::class)
+            )]
+        ),
+        ApiResponse(
+            responseCode = "409",
+            description = "Email já cadastrado",
+            content = [Content(
+                mediaType = "application/problem+json",
+                schema = Schema(implementation = ProblemDetail::class)
+            )]
+        ),
     )
     fun signup(@Valid @RequestBody request: SignupRequest): UserResponse =
         UserResponse.from(signup.execute(request.name, request.email, request.password))
 
     @PostMapping("/login")
     @SecurityRequirements
-    @Operation(summary = "Autenticar usuário", description = "Valida email e senha e emite um JWT. Credenciais incorretas retornam a mesma mensagem para email inexistente e senha inválida.")
+    @Operation(
+        summary = "Autenticar usuário",
+        description = "Valida email e senha e emite um JWT. Credenciais incorretas retornam a mesma mensagem para email inexistente e senha inválida."
+    )
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "Autenticado"),
-        ApiResponse(responseCode = "400", description = "Payload inválido", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = ProblemDetail::class))]),
-        ApiResponse(responseCode = "401", description = "Credenciais inválidas", content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = ProblemDetail::class))]),
+        ApiResponse(
+            responseCode = "400",
+            description = "Payload inválido",
+            content = [Content(
+                mediaType = "application/problem+json",
+                schema = Schema(implementation = ProblemDetail::class)
+            )]
+        ),
+        ApiResponse(
+            responseCode = "401",
+            description = "Credenciais inválidas",
+            content = [Content(
+                mediaType = "application/problem+json",
+                schema = Schema(implementation = ProblemDetail::class)
+            )]
+        ),
     )
     fun login(@Valid @RequestBody request: LoginRequest): LoginResponse {
         val token = login.execute(request.email, request.password)

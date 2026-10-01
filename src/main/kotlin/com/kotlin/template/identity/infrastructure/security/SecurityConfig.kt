@@ -11,8 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.*
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
@@ -23,7 +23,7 @@ import org.springframework.security.web.access.AccessDeniedHandler
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.util.Base64
+import java.util.*
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
@@ -32,12 +32,16 @@ import javax.crypto.spec.SecretKeySpec
 @EnableConfigurationProperties(JwtProperties::class, CorsProperties::class)
 class SecurityConfig {
     @Bean
-    fun passwordEncoder(): PasswordEncoder = DelegatingPasswordEncoder("pbkdf2", mapOf("pbkdf2" to Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8()))
+    fun passwordEncoder(): PasswordEncoder =
+        DelegatingPasswordEncoder("pbkdf2", mapOf("pbkdf2" to Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8()))
 
     @Bean
     fun jwtSecretKey(properties: JwtProperties): SecretKey {
-        val bytes = try { Base64.getDecoder().decode(properties.secret) }
-        catch (_: IllegalArgumentException) { throw IllegalArgumentException("JWT_SECRET must be Base64 encoded") }
+        val bytes = try {
+            Base64.getDecoder().decode(properties.secret)
+        } catch (_: IllegalArgumentException) {
+            throw IllegalArgumentException("JWT_SECRET must be Base64 encoded")
+        }
         require(bytes.size >= 32) { "JWT_SECRET must contain at least 32 random bytes encoded in Base64" }
         return SecretKeySpec(bytes, "HmacSHA256")
     }
@@ -92,7 +96,15 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/auth/signup", "/api/auth/login").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/actuator/health", "/actuator/health/**").permitAll()
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/actuator/health",
+                        "/actuator/health/**"
+                    ).permitAll()
                     .requestMatchers("/actuator/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }

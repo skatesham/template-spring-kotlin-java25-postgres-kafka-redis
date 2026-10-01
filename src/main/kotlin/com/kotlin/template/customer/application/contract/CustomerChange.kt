@@ -2,7 +2,7 @@ package com.kotlin.template.customer.application.contract
 
 import com.kotlin.template.customer.domain.event.CustomerChanged
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 /** Public integration contract. Contains no name, email or HTTP model. */
 data class CustomerChange(
@@ -20,9 +20,12 @@ data class CustomerChange(
         require((revision == 1L) == (type == "customer.created.v1"))
         require(!occurredAt.isAfter(now.plusSeconds(60)) && !occurredAt.isBefore(now.minusSeconds(30 * 86400L)))
     }
+
     companion object {
-        fun from(event: CustomerChanged) = CustomerChange(event.eventId, event.customerId.value,
-            event.ownerId, event.revision, "customer.${event.kind.name.lowercase()}.v1", event.occurredAt)
+        fun from(event: CustomerChanged) = CustomerChange(
+            event.eventId, event.customerId.value,
+            event.ownerId, event.revision, "customer.${event.kind.name.lowercase()}.v1", event.occurredAt
+        )
     }
 }
 

@@ -277,7 +277,8 @@ Antes de aprovar uma feature com dados pessoais:
 
 ## Referências oficiais
 
-Consultar sempre a versão vigente da LGPD e os materiais da Autoridade Nacional de Proteção de Dados (ANPD), especialmente:
+Consultar sempre a versão vigente da LGPD e os materiais da Autoridade Nacional de Proteção de Dados (ANPD),
+especialmente:
 
 - materiais educativos e publicações da ANPD;
 - guia de segurança da informação;

@@ -10,12 +10,17 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 
 @Service
-class PublishCustomerOutbox(private val outbox: CustomerOutbox, private val publisher: CustomerEventPublisher,
+class PublishCustomerOutbox(
+    private val outbox: CustomerOutbox, private val publisher: CustomerEventPublisher,
     private val clock: Clock, private val meters: MeterRegistry,
     @Value("\${app.customer.outbox.max-attempts:10}") private val maxAttempts: Int,
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
-    init { require(maxAttempts > 0) }
+
+    init {
+        require(maxAttempts > 0)
+    }
+
     @Transactional
     fun execute(): Boolean {
         val pending = outbox.lockNext() ?: return false
@@ -33,9 +38,13 @@ class PublishCustomerOutbox(private val outbox: CustomerOutbox, private val publ
             outbox.failed(pending.change.eventId, attempts, clock.instant().plusSeconds(delay), exhausted)
             meters.counter("customer.outbox.failures", "exhausted", exhausted.toString()).increment()
             // Exception messages and payloads can contain personal data. Only log the class.
-            log.warn("Customer outbox publication failed eventId={} exhausted={} error={}",
-                pending.change.eventId, exhausted, exception.javaClass.simpleName)
-        } finally { sample.stop(meters.timer("customer.outbox.publish.duration")) }
+            log.warn(
+                "Customer outbox publication failed eventId={} exhausted={} error={}",
+                pending.change.eventId, exhausted, exception.javaClass.simpleName
+            )
+        } finally {
+            sample.stop(meters.timer("customer.outbox.publish.duration"))
+        }
         return true
     }
 }

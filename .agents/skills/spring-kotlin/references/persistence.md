@@ -3,13 +3,13 @@
 Colocar persistência em
 `<base-package>.<context>.infrastructure.persistence`.
 
-| Papel | Exemplo |
-|---|---|
-| Modelo de domínio | `Order` |
-| Porta em `domain/repository/` | `OrderRepository` |
-| Modelo JPA | `OrderJpaEntity` |
+| Papel                         | Exemplo                     |
+|-------------------------------|-----------------------------|
+| Modelo de domínio             | `Order`                     |
+| Porta em `domain/repository/` | `OrderRepository`           |
+| Modelo JPA                    | `OrderJpaEntity`            |
 | Interface Spring Data interna | `SpringDataOrderRepository` |
-| Adapter da porta | `JpaOrderRepository` |
+| Adapter da porta              | `JpaOrderRepository`        |
 
 ## Fronteira
 

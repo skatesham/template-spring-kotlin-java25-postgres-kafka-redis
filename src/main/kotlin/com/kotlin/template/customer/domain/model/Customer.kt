@@ -1,17 +1,26 @@
 package com.kotlin.template.customer.domain.model
 
-import com.kotlin.template.customer.domain.event.CustomerChanged
 import com.kotlin.template.customer.domain.event.CustomerChangeKind
+import com.kotlin.template.customer.domain.event.CustomerChanged
 import com.kotlin.template.customer.domain.exception.CustomerRevisionConflict
 import java.time.Instant
-import java.util.Locale
-import java.util.UUID
+import java.util.*
 
-@JvmInline value class CustomerId(val value: UUID)
+@JvmInline
+value class CustomerId(val value: UUID)
 
-@JvmInline value class CustomerEmail(val value: String) {
-    init { require(value == value.trim().lowercase(Locale.ROOT) && value.length <= 254 && value.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+"))) }
-    companion object { fun of(value: String) = CustomerEmail(value.trim().lowercase(Locale.ROOT)) }
+@JvmInline
+value class CustomerEmail(val value: String) {
+    init {
+        require(
+            value == value.trim()
+                .lowercase(Locale.ROOT) && value.length <= 254 && value.matches(Regex("[^\\s@]+@[^\\s@]+\\.[^\\s@]+"))
+        )
+    }
+
+    companion object {
+        fun of(value: String) = CustomerEmail(value.trim().lowercase(Locale.ROOT))
+    }
 }
 
 class Customer(
@@ -31,7 +40,9 @@ class Customer(
     private val changes = mutableListOf<CustomerChanged>()
     val events: List<CustomerChanged> get() = changes.toList()
 
-    init { validateName(name); require(revision > 0) }
+    init {
+        validateName(name); require(revision > 0)
+    }
 
     fun update(name: String, email: String, expectedRevision: Long, eventId: UUID, now: Instant) {
         check(!deleted) { "Customer already deleted" }
@@ -54,12 +65,19 @@ class Customer(
         record(CustomerChangeKind.DELETED, eventId, now)
     }
 
-    private fun checkRevision(expected: Long) { if (revision != expected) throw CustomerRevisionConflict() }
+    private fun checkRevision(expected: Long) {
+        if (revision != expected) throw CustomerRevisionConflict()
+    }
+
     private fun record(kind: CustomerChangeKind, eventId: UUID, now: Instant) {
         changes.add(CustomerChanged(eventId, id, ownerId, revision, kind, now))
     }
+
     companion object {
-        private fun validateName(name: String) { require(name.isNotBlank() && name.length <= 100) }
+        private fun validateName(name: String) {
+            require(name.isNotBlank() && name.length <= 100)
+        }
+
         fun register(id: CustomerId, ownerId: UUID, name: String, email: String, eventId: UUID, now: Instant) =
             Customer(id, ownerId, name.trim(), CustomerEmail.of(email), 1, now, now).apply {
                 record(CustomerChangeKind.CREATED, eventId, now)

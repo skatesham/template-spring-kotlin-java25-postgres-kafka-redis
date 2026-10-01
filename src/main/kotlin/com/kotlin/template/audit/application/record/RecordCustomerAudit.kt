@@ -12,8 +12,14 @@ class RecordCustomerAudit(private val records: CustomerAudit, private val meters
     fun execute(change: CustomerChange) {
         change.validate()
         val created = records.record(change)
-        meters.counter("customer.consumer.records", "consumer", "audit",
-            "result", if (created) "created" else "duplicate").increment()
+        meters.counter(
+            "customer.consumer.records", "consumer", "audit",
+            "result", if (created) "created" else "duplicate"
+        ).increment()
     }
-    @Transactional fun purge() { records.purge() }
+
+    @Transactional
+    fun purge() {
+        records.purge()
+    }
 }

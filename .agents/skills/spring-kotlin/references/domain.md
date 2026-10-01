@@ -25,14 +25,14 @@ O exemplo representa um UUID já recebido; não implementa sua geração.
 
 ## Patterns conforme a necessidade
 
-| Pattern | Quando usar |
-|---|---|
-| Repository | Expressar operações de persistência na linguagem do domínio; interface em `domain/repository/`, implementação na infraestrutura |
-| Factory | Construção do aggregate envolve regras próprias; colocar em `domain/factory/` |
-| Strategy | Existem comportamentos intercambiáveis reais |
-| Specification | Regras precisam ser combinadas e reutilizadas; colocar em `domain/specification/` |
-| Domain service | Regra de negócio não pertence naturalmente a uma única entity/value object; colocar em `domain/service/` |
-| Domain event | Registrar um fato de negócio como `OrderConfirmed`; colocar em `domain/event/` |
+| Pattern        | Quando usar                                                                                                                     |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------|
+| Repository     | Expressar operações de persistência na linguagem do domínio; interface em `domain/repository/`, implementação na infraestrutura |
+| Factory        | Construção do aggregate envolve regras próprias; colocar em `domain/factory/`                                                   |
+| Strategy       | Existem comportamentos intercambiáveis reais                                                                                    |
+| Specification  | Regras precisam ser combinadas e reutilizadas; colocar em `domain/specification/`                                               |
+| Domain service | Regra de negócio não pertence naturalmente a uma única entity/value object; colocar em `domain/service/`                        |
+| Domain event   | Registrar um fato de negócio como `OrderConfirmed`; colocar em `domain/event/`                                                  |
 
 Eventos de domínio não conhecem tópico, serializador ou broker. Não criar
 hierarquias genéricas que ocultem o vocabulário do negócio.
