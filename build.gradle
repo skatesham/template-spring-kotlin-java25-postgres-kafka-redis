@@ -134,9 +134,10 @@ tasks.register('coverageBadge') {
             throw new GradleException('Generate the badge with ./gradlew coverage and no --tests filter.')
         }
         def factory = DocumentBuilderFactory.newInstance()
-        factory.setFeature('https://apache.org/xml/features/nonvalidating/load-external-dtd', false)
-        factory.setFeature('https://xml.org/sax/features/external-general-entities', false)
-        factory.setFeature('https://xml.org/sax/features/external-parameter-entities', false)
+        // Parser feature identifiers are exact URIs, not URLs to upgrade to HTTPS.
+        factory.setFeature('http://apache.org/xml/features/nonvalidating/load-external-dtd', false)
+        factory.setFeature('http://xml.org/sax/features/external-general-entities', false)
+        factory.setFeature('http://xml.org/sax/features/external-parameter-entities', false)
         def report = factory.newDocumentBuilder().parse(inputs.files.singleFile)
         def counter = (0..<report.documentElement.childNodes.length)
                 .collect { report.documentElement.childNodes.item(it) }
