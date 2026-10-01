@@ -28,6 +28,8 @@ import kotlin.test.assertNotEquals
     "app.security.jwt.secret=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
     "spring.datasource.password=test",
     "spring.docker.compose.enabled=false",
+    "app.customer.messaging.enabled=false",
+    "app.customer.jobs.enabled=false",
 ])
 class IdentityIntegrationTests {
     @Autowired lateinit var mvc: MockMvc

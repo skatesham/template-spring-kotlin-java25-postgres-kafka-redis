@@ -65,8 +65,8 @@ test: ## Executa todos os testes; integração exige Docker.
 test-http: ## Executa validação, autenticação e autorização HTTP, sem Docker.
 	@$(GRADLEW) test --tests 'com.kotlin.template.identity.AuthHttpTests'
 
-test-integration: ## Executa os testes de identidade com PostgreSQL real via Testcontainers.
-	@$(GRADLEW) test --tests 'com.kotlin.template.identity.IdentityIntegrationTests'
+test-integration: ## Executa os testes de integração com PostgreSQL, Redis e Kafka via Testcontainers.
+	@$(GRADLEW) test --tests '*IntegrationTests'
 
 test-class: ## Executa uma classe ou padrão: make test-class TEST=<classe>.
 	@test -n "$${TEST:-}" || { printf 'Informe TEST=<classe ou padrão>.\n' >&2; exit 1; }
@@ -80,3 +80,19 @@ kafka-topics: check-db ## Lista os tópicos do broker local (infraestrutura deve
 
 kafka-create-topic: check-db ## Cria um tópico local: make kafka-create-topic TOPIC=events.demo.
 	@$(COMPOSE) exec -T kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:19092 --create --if-not-exists --topic "$$TOPIC" --partitions 1 --replication-factor 1
+
+.PHONY: test-customer customer-demo
+
+test-customer: ## Executa testes unitários e integração do fluxo Customer (exige Docker).
+	@$(GRADLEW) test --tests 'com.kotlin.template.customer.*'
+
+customer-demo: ## Demonstra CRUD, cache e notificações na API em execução (exige curl, jq e OpenSSL).
+	@./scripts/customer-demo.sh
+
+.PHONY: test-restassured coverage
+
+test-restassured: ## Executa testes RestAssured com HTTP real e PostgreSQL, Redis e Kafka (exige Docker).
+	@$(GRADLEW) test --tests 'com.kotlin.template.api.RestAssuredIntegrationTests'
+
+coverage: ## Executa a suite completa, gera relatórios JaCoCo e atualiza o badge local do README.
+	@$(GRADLEW) coverage

@@ -1,4 +1,5 @@
 plugins {
+	id 'jacoco'
 	id 'org.jetbrains.kotlin.jvm' version '2.3.21'
 	id 'org.jetbrains.kotlin.plugin.spring' version '2.3.21'
 	id 'org.springframework.boot' version '4.1.1'
@@ -38,6 +39,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
 	implementation 'tools.jackson.module:jackson-module-kotlin'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -54,6 +56,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'io.rest-assured:rest-assured:6.0.1'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
@@ -87,4 +90,64 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
 	dependsOn test
+}
+
+// Measure all production classes, including infrastructure; do not hide uncovered code.
+jacoco {
+    toolVersion = '0.8.15'
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn tasks.named('test')
+    reports {
+        html.required = true
+        xml.required = true
+        csv.required = true
+    }
+}
+
+tasks.register('coverageBadge') {
+    group = 'verification'
+    description = 'Updates the README badge from full-suite JaCoCo line coverage.'
+    dependsOn tasks.named('jacocoTestReport')
+    inputs.file(layout.buildDirectory.file('reports/jacoco/test/jacocoTestReport.xml'))
+    outputs.file(layout.projectDirectory.file('docs/assets/coverage.svg'))
+    doLast {
+        def testFilter = tasks.named('test').get().filter
+        if (!testFilter.includePatterns.empty || !testFilter.commandLineIncludePatterns.empty) {
+            throw new GradleException('Generate the badge with ./gradlew coverage and no --tests filter.')
+        }
+        def factory = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+        factory.setFeature('http://apache.org/xml/features/nonvalidating/load-external-dtd', false)
+        factory.setFeature('http://xml.org/sax/features/external-general-entities', false)
+        factory.setFeature('http://xml.org/sax/features/external-parameter-entities', false)
+        def report = factory.newDocumentBuilder().parse(inputs.files.singleFile)
+        def counter = (0..<report.documentElement.childNodes.length)
+            .collect { report.documentElement.childNodes.item(it) }
+            .find { it.nodeName == 'counter' && it.getAttribute('type') == 'LINE' }
+        if (counter == null) throw new GradleException('JaCoCo report has no line counter.')
+        def covered = counter.getAttribute('covered').toLong()
+        def missed = counter.getAttribute('missed').toLong()
+        if (covered + missed == 0) throw new GradleException('JaCoCo report contains no production lines.')
+        def percentage = (covered * 100.0G / (covered + missed)).setScale(1, java.math.RoundingMode.HALF_UP)
+        def color = percentage >= 90 ? '#4c1' : percentage >= 80 ? '#dfb317' : '#fe7d37'
+        def badge = outputs.files.singleFile
+        badge.parentFile.mkdirs()
+        badge.text = """<svg xmlns="http://www.w3.org/2000/svg" width="150" height="20" role="img" aria-label="line coverage: ${percentage}%">
+  <title>Line coverage: ${percentage}% (${covered}/${covered + missed} lines)</title>
+  <clipPath id="round"><rect width="150" height="20" rx="3"/></clipPath>
+  <g clip-path="url(#round)"><rect width="91" height="20" fill="#555"/><rect x="91" width="59" height="20" fill="${color}"/></g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11">
+    <text x="45.5" y="14">line coverage</text><text x="120.5" y="14">${percentage}%</text>
+  </g>
+</svg>
+"""
+        logger.lifecycle("Line coverage: {}% ({}/{}); badge: {}", percentage, covered, covered + missed, badge)
+    }
+}
+
+tasks.register('coverage') {
+    group = 'verification'
+    description = 'Runs all tests, creates HTML/XML/CSV coverage reports and refreshes the README badge.'
+    dependsOn tasks.named('coverageBadge')
 }
