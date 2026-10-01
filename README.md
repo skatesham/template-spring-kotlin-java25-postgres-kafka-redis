@@ -4,6 +4,16 @@
 
 [![Line coverage](docs/assets/coverage.svg)](#testes-e-cobertura)
 [![CI](https://github.com/skatesham/template-spring-kotlin-java25-postgres-kafka-redis/actions/workflows/ci.yml/badge.svg)](https://github.com/skatesham/template-spring-kotlin-java25-postgres-kafka-redis/actions/workflows/ci.yml)
+[![Latest tag](https://img.shields.io/github/v/tag/skatesham/template-spring-kotlin-java25-postgres-kafka-redis?sort=semver&label=tag)](https://github.com/skatesham/template-spring-kotlin-java25-postgres-kafka-redis/tags)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+[![Kotlin 2.3.21](https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?logo=kotlin&logoColor=white)](build.gradle)
+[![Java 25](https://img.shields.io/badge/Java-25-ED8B00)](build.gradle)
+[![Spring Boot 4.1.1](https://img.shields.io/badge/Spring_Boot-4.1.1-6DB33F?logo=springboot&logoColor=white)](build.gradle)
+[![Gradle 9.7.1](https://img.shields.io/badge/Gradle-9.7.1-02303A?logo=gradle&logoColor=white)](gradle/wrapper/gradle-wrapper.properties)
+[![PostgreSQL 18](https://img.shields.io/badge/PostgreSQL-18-4169E1?logo=postgresql&logoColor=white)](compose.yaml)
+[![Redis 8](https://img.shields.io/badge/Redis-8-FF4438?logo=redis&logoColor=white)](compose.yaml)
+[![Kafka 4.1.2](https://img.shields.io/badge/Kafka-4.1.2-231F20?logo=apachekafka&logoColor=white)](compose.yaml)
 
 API modular em **Kotlin + Spring Boot**, com Spring MVC, JPA bloqueante e domínio independente de infraestrutura. O projeto implementa autenticação e um fluxo completo de Customer: **REST → PostgreSQL + Outbox → Kafka → auditoria e notificações**, com cache Redis, idempotência e recuperação de falhas.
 
