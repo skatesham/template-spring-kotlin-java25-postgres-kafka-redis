@@ -1,3 +1,6 @@
+import javax.xml.parsers.DocumentBuilderFactory
+import java.math.RoundingMode
+
 plugins {
     id 'jacoco'
     id 'org.jetbrains.kotlin.jvm' version '2.3.21'
@@ -25,9 +28,22 @@ repositories {
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
+    // Security overrides until Spring Boot's BOM includes these patched releases.
+    set('jackson-bom.version', '3.1.7')
+    set('jackson-2-bom.version', '2.21.7')
+    set('tomcat.version', '11.0.26')
+    set('logback.version', '1.6.3')
 }
 
 dependencies {
+    constraints {
+        implementation('com.github.luben:zstd-jni:1.5.7-14') {
+            because 'Fix native bounds checks and dictionary use-after-free (CVE-2026-87795 and related CVEs)'
+        }
+        implementation('at.yawk.lz4:lz4-java:1.11.1') {
+            because 'Fix native XXHash range validation (CVE-2026-59949)'
+        }
+    }
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
@@ -50,7 +66,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-redis-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
+    // Kafka integration tests use Testcontainers, so no embedded broker/test starter is needed.
     testImplementation 'org.springframework.boot:spring-boot-starter-restdocs'
     testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
@@ -117,10 +133,10 @@ tasks.register('coverageBadge') {
         if (!testFilter.includePatterns.empty || !testFilter.commandLineIncludePatterns.empty) {
             throw new GradleException('Generate the badge with ./gradlew coverage and no --tests filter.')
         }
-        def factory = javax.xml.parsers.DocumentBuilderFactory.newInstance()
-        factory.setFeature('http://apache.org/xml/features/nonvalidating/load-external-dtd', false)
-        factory.setFeature('http://xml.org/sax/features/external-general-entities', false)
-        factory.setFeature('http://xml.org/sax/features/external-parameter-entities', false)
+        def factory = DocumentBuilderFactory.newInstance()
+        factory.setFeature('https://apache.org/xml/features/nonvalidating/load-external-dtd', false)
+        factory.setFeature('https://xml.org/sax/features/external-general-entities', false)
+        factory.setFeature('https://xml.org/sax/features/external-parameter-entities', false)
         def report = factory.newDocumentBuilder().parse(inputs.files.singleFile)
         def counter = (0..<report.documentElement.childNodes.length)
                 .collect { report.documentElement.childNodes.item(it) }
@@ -129,7 +145,7 @@ tasks.register('coverageBadge') {
         def covered = counter.getAttribute('covered').toLong()
         def missed = counter.getAttribute('missed').toLong()
         if (covered + missed == 0) throw new GradleException('JaCoCo report contains no production lines.')
-        def percentage = (covered * 100.0G / (covered + missed)).setScale(1, java.math.RoundingMode.HALF_UP)
+        def percentage = (covered * 100.0G / (covered + missed)).setScale(1, RoundingMode.HALF_UP)
         def color = percentage >= 90 ? '#4c1' : percentage >= 80 ? '#dfb317' : '#fe7d37'
         def badge = outputs.files.singleFile
         badge.parentFile.mkdirs()
